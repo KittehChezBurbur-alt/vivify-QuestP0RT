@@ -1,0 +1,56 @@
+name: Build Vivify QuestP0RT
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up build environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake make clang build-essential zip wget unzip
+
+    - name: Download Android NDK
+      run: |
+        cd $HOME
+        wget https://dl.google.com/android/repository/android-ndk-r23c-linux-x86_64.zip
+        unzip -q android-ndk-r23c-linux-x86_64.zip
+
+    - name: Create build directory
+      run: mkdir -p build
+
+    - name: Configure CMake
+      run: |
+        cd build
+        cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/android-ndk-r23c/build/cmake/android.toolchain.cmake \
+              -DANDROID_PLATFORM=android-29 \
+              -DANDROID_ABI=arm64-v8a \
+              ..
+
+    - name: Build
+      run: |
+        cd build
+        make
+
+    - name: Create qmod package
+      run: |
+        mkdir -p qmod_package/libs
+        cp qmod.json qmod_package/
+        cp build/vivify.so qmod_package/libs/
+        cd qmod_package
+        zip -r ../vivify.qmod .
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: vivify-questport
+        path: vivify.qmod
+      
