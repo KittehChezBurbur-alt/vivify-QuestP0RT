@@ -1,0 +1,41 @@
+# Build artifacts
+/build/
+/dist/
+/bin/
+/obj/
+*.o
+*.so
+*.dll
+*.exe
+*.a
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.user
+*.session
+
+# Dependencies
+/libs/
+/packages/
+/vendor/
+
+# Mod files
+*.qmod
+*.zip
+
+# Logs
+*.log
+
+# Runtime data
+/run/
+/temp/
+
+# CMake
+CMakeFiles/
+cmake_install.cmake
+Makefile
